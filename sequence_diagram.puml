@@ -1,0 +1,67 @@
+gigi@startuml undeage_user
+
+autonumber
+skinparam MaxMessageSize 150
+
+!$ac = 'Вывести сообщение "Отлично! Учетная запись активирована"'
+
+Actor "Underage\nUser" as kid order 10
+Boundary "Our system" as app order 20
+Actor "Underage User's \nclose relative" as mom order 40
+Actor "Administrator" as admin order 50
+
+
+ref over kid
+Юзер был зарегистрирован и перешел по ссылке для регистрации в приложении.
+<<ссылка на юзкейс>>
+end ref
+
+
+kid->app: Указать дату рождения
+activate kid
+activate app
+app -> app: Вычислить возраст пользователя
+alt Если пользователь совершеннолетний
+app -> kid: $ac
+app -> app: Активировать учетную запись
+else Если пользователь несовершеннолетний
+app -> kid: Вывести сообщение "Предоставьте документы"
+
+app->kid: Запросить документ
+    alt Если путешествует с родственником
+    kid --> app: Отметить родственника в приложении
+    kid --> app: Загрузить документ, подтверждающий родство
+    app -> mom: Запросить подтверждение родства
+    activate mom
+    mom --> app: Подтвердить
+    deactivate mom
+    app -> admin: Отправить согласие на проверку
+    activate admin
+    admin --> app: Подтвердить
+    deactivate admin
+    app -> kid:  $ac
+    else Если путешествует без родственника
+    kid --> app: Предоставить согласие от обоих родителей
+    app -> admin: Отправить согласие на проверку
+    activate admin
+    admin --> app: Подтвердить
+    deactivate admin
+    app --> kid: $ac
+    deactivate kid
+    app -> app: Активировать учетную запись
+    note right:а
+    end
+end
+
+loop Проверка оставшегося времени до начала путешествия
+app -> app: Проверить время, оставшееся до начала путешествия
+opt Если осталось менее 48 часов, а документы не были предоcтавлены
+app -> app: Заблокировать учетную запись
+
+
+end
+end
+
+
+
+@enduml
