@@ -49,7 +49,6 @@ app->kid: Запросить документ
     app --> kid: $ac
     deactivate kid
     app -> app: Активировать учетную запись
-    note right:а
     end
 end
 
